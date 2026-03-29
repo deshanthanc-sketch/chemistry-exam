@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Exam | Ravindu Laksiri</title>
+    <style>
+        :root {
+            --primary-color: #004e92;
+            --secondary-color: #000428;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 850px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #666;
+            font-weight: bold;
+            margin: 5px 0 0 0;
+        }
+
+        .instructor-name {
+            color: var(--accent-color) !important;
+            font-size: 18px;
+        }
+
+        #start-screen {
+            text-align: center;
+        }
+
+        /* විද්‍යාත්මක පසුබිම් රූපයක් වැනි පෙනුමක් ලබා දීමට */
+        .welcome-img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 10px rgba(0,78,146,0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .start-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        #timer {
+            font-size: 40px;
+            color: var(--accent-color);
+            font-weight: 900;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'Courier New', Courier, monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        #pdf-viewer {
+            margin-top: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        #upload-form {
+            background: #f1f3f5;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(to right, #004e92, #000428);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .loading-text {
+            color: var(--primary-color);
+            font-weight: bold;
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <div class="header">
+        <h1>Chemistry Online Examination</h1>
+        <p class="instructor-name">By: Ravindu Laksiri</p>
+        <p>Logic based Chemistry Education</p>
+    </div>
+    
+    <div id="start-screen">
+        <div style="font-size: 50px;">🧪</div>
+        <h3>පරීක්ෂණය ආරම්භ කිරීමට ඔබේ නම ඇතුළත් කරන්න</h3>
+        <input type="text" id="s-name" placeholder="ඔබේ සම්පූර්ණ නම මෙතැන ලියන්න...">
+        <button class="btn start-btn" onclick="startExam()">Start My Exam Now</button>
+    </div>
+
+    <div id="timer" style="display:none;">
+        <span id="time">01:30:00</span>
+    </div>
+
+    <div id="pdf-viewer" style="display:none;">
+        <iframe id="pdf-frame" src=""></iframe>
+    </div>
+
+    <form id="upload-form" style="display:none;">
+        <input type="hidden" name="student_name" id="h-name">
+        <h4 style="margin-top:0;">📤 ඔබේ පිළිතුරු පත්‍රය උඩුගත (Upload) කරන්න</h4>
+        <p style="font-size: 14px; color: #666;">PDF හෝ පැහැදිලි ඡායාරූප භාවිතා කරන්න.</p>
+        <input type="file" id="student-file" accept="application/pdf,image/*" required style="margin-bottom: 15px; width: 100%;">
+        <button type="submit" id="sub-btn" class="btn submit-btn">Submit My Answers</button>
+        <div id="loading" class="loading-text">Uploading... කරුණාකර රැඳී සිටින්න.</div>
+    </form>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzCcfeJ5D2YzR_5JGvUfYUMzNRqyoH4AtVf-kePeWWnEsbWGQzF8ldbtvqkVK83EKrsPQ/exec';
+    let timeLeft = 5400; 
+
+    function startExam() {
+        let name = document.getElementById('s-name').value;
+        if(!name.trim()) return alert("කරුණාකර නම ඇතුළත් කරන්න!");
+
+        document.getElementById('h-name').value = name;
+        
+        // PDF Link
+        document.getElementById('pdf-frame').src = 'https://drive.google.com/file/d/16eSGzY-chmfctqWi-iaeuCzmlhGpDX6j/preview';
+
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('timer').style.display = 'block';
+        document.getElementById('pdf-viewer').style.display = 'block';
+        document.getElementById('upload-form').style.display = 'block';
+
+        const timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('time').innerText = "TIME UP!";
+                alert("කාලය අවසන්! කරුණාකර පිළිතුරු යොමු කරන්න.");
+                return;
+            }
+            timeLeft--;
+            let hours = Math.floor(timeLeft / 3600);
+            let mins = Math.floor((timeLeft % 3600) / 60);
+            let secs = timeLeft % 60;
+            document.getElementById('time').innerText = 
+                (hours < 10 ? '0' : '') + hours + ":" + 
+                (mins < 10 ? '0' : '') + mins + ":" + 
+                (secs < 10 ? '0' : '') + secs;
+        }, 1000);
+    }
+
+    document.getElementById('upload-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('sub-btn');
+        const load = document.getElementById('loading');
+        const file = document.getElementById('student-file').files[0];
+
+        btn.disabled = true;
+        load.style.display = 'block';
+
+        const reader = new FileReader();
+        reader.onload = function() {
+            const base64 = reader.result.split(',')[1];
+            const formData = new URLSearchParams();
+            formData.append('fileData', base64);
+            formData.append('fileName', file.name);
+            formData.append('mimeType', file.type);
+            formData.append('student_name', document.getElementById('h-name').value);
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+            .then(() => {
+                alert("පින්වත් සිසුවාණෙනි, ඔබේ පිළිතුරු සාර්ථකව ලැබුණා! - Ravindu Laksiri");
+                location.reload();
+            })
+            .catch(() => {
+                alert("දෝෂයක්! නැවත උත්සාහ කරන්න.");
+                btn.disabled = false;
+                load.style.display = 'none';
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+</script>
+
+</body>
+</html>
